@@ -1,0 +1,14 @@
+{
+  "cpus": [
+    { "id": "cpu1", "name": "AMD Ryzen 5 7600X", "price": 219, "socket": "AM5" },
+    { "id": "cpu2", "name": "Intel Core i5-13600K", "price": 320, "socket": "LGA1700" }
+  ],
+  "motherboards": [
+    { "id": "mobo1", "name": "ASUS ROG Strix B650-A", "price": 199, "socket": "AM5" },
+    { "id": "mobo2", "name": "MSI PRO Z790-P", "price": 189, "socket": "LGA1700" }
+  ],
+  "gpus": [
+    { "id": "gpu1", "name": "NVIDIA RTX 4060 Ti", "price": 399 },
+    { "id": "gpu2", "name": "AMD Radeon RX 7800 XT", "price": 519 }
+  ]
+}

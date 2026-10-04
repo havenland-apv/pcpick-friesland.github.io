@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCForge - Friese PC Part Picker</title>
+    <script src="https://tailwindcss.com"></script>
+    <style>
+        body { background-color: #1e232b; color: #e2e8f0; font-family: sans-serif; }
+    </style>
+</head>
+<body>
+    <!-- NAVIGATIEBALK -->
+    <nav class="bg-[#14181c] border-b border-gray-800 px-6 py-4 flex items-center justify-between shadow-md">
+        <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 bg-blue-500 rounded flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/30">PC</div>
+            <span class="text-xl font-black tracking-wider text-white">PC<span class="text-blue-500">FORGE</span></span>
+        </div>
+        <div class="hidden md:flex space-x-6 text-sm font-semibold tracking-wide">
+            <span class="text-blue-400 border-b-2 border-blue-400 pb-1 cursor-pointer">System Builder</span>
+            <span class="hover:text-white transition cursor-pointer">Build Guides</span>
+        </div>
+    </nav>
+
+    <!-- CONTENT -->
+    <main class="max-w-6xl mx-auto p-4 md:p-8">
+        <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#14181c] p-6 rounded-xl border border-gray-800 shadow-xl">
+            <div>
+                <h1 class="text-2xl font-bold text-white">Stel je Game PC Samen</h1>
+                <p class="text-sm text-gray-400">Kies je onderdelen en check direct de compatibiliteit</p>
+            </div>
+            <div id="status-box" class="px-4 py-3 rounded-lg font-bold text-sm shadow-inner bg-emerald-950/50 text-emerald-400 border border-emerald-800">
+                ✅ Systeemstatus: Alle onderdelen passen in elkaar!
+            </div>
+        </div>
+
+        <!-- TABEL -->
+        <div class="bg-[#14181c] rounded-xl border border-gray-800 shadow-xl overflow-hidden mb-12">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-[#1a1f26] border-b border-gray-800 text-xs font-bold tracking-wider text-gray-400 uppercase">
+                        <th class="p-4 w-1/4">Component</th>
+                        <th class="p-4 w-2/5">Geselecteerd Onderdeel</th>
+                        <th class="p-4 w-1/6">Prijs</th>
+                        <th class="p-4 w-1/6 text-right">Actie</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-800 text-sm">
+                    <!-- CPU -->
+                    <tr class="hover:bg-[#1a1f26]/50 transition">
+                        <td class="p-4 font-semibold text-blue-400">Processor (CPU)</td>
+                        <td id="cpu-name" class="p-4 text-white font-medium">Geen processor gekozen</td>
+                        <td id="cpu-price" class="p-4 font-bold text-emerald-400">—</td>
+                        <td class="p-4 text-right">
+                            <select id="cpu-select" onchange="updateSystem()" class="bg-[#1e232b] border border-gray-700 text-white text-xs rounded-lg px-3 py-2">
+                                <option value="">Kies CPU...</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <!-- MOBO -->
+                    <tr class="hover:bg-[#1a1f26]/50 transition">
+                        <td class="p-4 font-semibold text-blue-400">Moederbord</td>
+                        <td id="mobo-name" class="p-4 text-white font-medium">Geen moederbord gekozen</td>
+                        <td id="mobo-price" class="p-4 font-bold text-emerald-400">—</td>
+                        <td class="p-4 text-right">
+                            <select id="mobo-select" onchange="updateSystem()" class="bg-[#1e232b] border border-gray-700 text-white text-xs rounded-lg px-3 py-2">
+                                <option value="">Kies Moederbord...</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <!-- GPU -->
+                    <tr class="hover:bg-[#1a1f26]/50 transition">
+                        <td class="p-4 font-semibold text-blue-400">Videokaart (GPU)</td>
+                        <td id="gpu-name" class="p-4 text-white font-medium">Geen videokaart gekozen</td>
+                        <td id="gpu-price" class="p-4 font-bold text-emerald-400">—</td>
+                        <td class="p-4 text-right">
+                            <select id="gpu-select" onchange="updateSystem()" class="bg-[#1e232b] border border-gray-700 text-white text-xs rounded-lg px-3 py-2">
+                                <option value="">Kies Videokaart...</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <!-- TOTAAL -->
+                    <tr class="bg-[#1a1f26] font-bold text-white border-t-2 border-gray-800 text-base">
+                        <td class="p-4">Totaal</td>
+                        <td class="p-4"></td>
+                        <td id="total-price" class="p-4 text-emerald-400 text-xl">€0</td>
+                        <td class="p-4"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- CARDS -->
+        <div>
+            <h2 class="text-xl font-bold text-white mb-6">Populaire Build Guides</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-[#14181c] border border-gray-800 rounded-xl p-5 flex flex-col justify-between shadow-xl">
+                    <div>
+                        <h3 class="font-bold text-lg text-white mb-1">Entry Level AMD Build</h3>
+                        <p class="text-xs text-gray-400 mb-3">Ryzen 5 5500 • RX 6600</p>
+                        <p class="text-sm text-gray-300">Perfect voor e-sports games zoals Fortnite op 1080p instellingen.</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-gray-800 text-emerald-400 font-bold">€649.00</div>
+                </div>
+                <div class="bg-[#14181c] border border-gray-800 rounded-xl p-5 flex flex-col justify-between shadow-xl">
+                    <div>
+                        <h3 class="font-bold text-lg text-white mb-1">Excellent AMD Streaming Build</h3>
+                        <p class="text-xs text-gray-400 mb-3">Ryzen 5 7600X • RTX 4070 Super</p>
+                        <p class="text-sm text-gray-300">Ideaal voor gamers die tegelijkertijd vloeiend willen streamen op Twitch.</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-gray-800 text-emerald-400 font-bold">€1489.00</div>
+                </div>
+                <div class="bg-[#14181c] border border-gray-800 rounded-xl p-5 flex flex-col justify-between shadow-xl">
+                    <div>
+                        <h3 class="font-bold text-lg text-white mb-1">Magnificent Intel Beast</h3>
+                        <p class="text-xs text-gray-400 mb-3">Core i7-14750K • RTX 4080 Super</p>
+                        <p class="text-sm text-gray-300">Geen compromissen. Maximale FPS op 4K ultra-settings en klaar voor VR.</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-gray-800 text-emerald-400 font-bold">€2799.00</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- HIER WORDT HET APARTE SCRIPT INGEBROKEN -->
+    <script src="script.js"></script>
+</body>
+</html>
