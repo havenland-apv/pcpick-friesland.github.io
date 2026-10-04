@@ -3,135 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PCForge | Friesland Custom PC Builder</title>
+    <title>PCForge - Custom PC Part Picker</title>
+    <!-- Tailwind CSS voor de basislay-out -->
     <script src="https://tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cloudflare.com">
+    <!-- Jouw eigen losse CSS-bestand koppelen -->
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-[#0b0f14] text-[#cbd5e1] font-sans min-h-screen relative overflow-x-hidden">
+<body class="min-h-screen">
 
     <!-- NAVIGATIEBALK -->
-    <nav class="sticky top-0 z-50 bg-[#0f131a]/80 backdrop-blur-md border-b border-gray-800/60 px-6 py-4 flex items-center justify-between shadow-lg">
-        <div class="flex items-center space-x-3">
-            <div class="w-9 h-9 bg-gradient-to-tr from-blue-600 to-cyan-400 rounded-xl flex items-center justify-center font-black text-white shadow-lg shadow-blue-500/20">
-                <i class="fa-solid fa-microchip text-sm"></i>
+    <nav class="navbar px-6 py-3 flex items-center justify-between shadow-md">
+        <div class="flex items-center space-x-3 cursor-pointer">
+            <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center font-black text-white tracking-tighter">
+                <i class="fa-solid fa-screwdriver-wrench text-sm"></i>
             </div>
-            <span class="text-xl font-black tracking-wider text-white">PC<span class="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">FORGE</span></span>
+            <span class="text-lg font-black tracking-wider text-white">PC<span class="text-blue-500">FORGE</span></span>
+        </div>
+        <div class="hidden md:flex space-x-6 text-xs font-bold uppercase tracking-wider">
+            <span class="text-blue-400 border-b-2 border-blue-500 pb-1 cursor-pointer">System Builder</span>
+            <span class="text-gray-400 hover:text-white transition cursor-pointer">Build Guides</span>
+            <span class="text-gray-400 hover:text-white transition cursor-pointer">Completed Builds</span>
         </div>
     </nav>
 
-    <!-- MAIN CONTENT -->
-    <main class="relative max-w-6xl mx-auto p-4 md:p-8">
-        
-        <!-- DASHBOARD MET METRICS -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            <div class="lg:col-span-2 bg-[#131822]/90 border border-gray-800/80 p-6 rounded-2xl shadow-2xl backdrop-blur-sm">
-                <h1 class="text-3xl font-extrabold text-white tracking-tight mb-2">Stel jouw Custom Game PC Samen</h1>
-                <p class="text-sm text-gray-400">Selecteer onderdelen om realtime de compatibiliteit, totaalprijs en stroomverbruik te berekenen.</p>
+    <!-- INTERACTIEVE PCPARTPICKER SYSTEEMBALK -->
+    <div class="sticky-metrics sticky top-0 z-40 shadow-md">
+        <div class="max-w-6xl mx-auto px-4 md:px-8 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <!-- Systeemstatus -->
+            <div id="status-box" class="status-banner-ok flex items-center space-x-2 text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded w-full sm:w-auto">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>Systeemstatus: Compatibel</span>
             </div>
-            <div class="bg-gradient-to-br from-[#171e2c] to-[#111622] border border-gray-800 p-5 rounded-2xl shadow-2xl flex flex-col justify-between">
-                <div class="flex items-center justify-between border-b border-gray-800/60 pb-3">
-                    <span class="text-xs font-bold uppercase tracking-widest text-gray-400">Live Analyse</span>
-                    <div id="status-badge" class="px-2.5 py-1 rounded-full text-xs font-black bg-blue-500/10 text-blue-400 border border-blue-500/20">STANDBY</div>
+            <!-- Wattage & Totaalprijs -->
+            <div class="flex items-center space-x-6 text-sm font-semibold tracking-wide w-full sm:w-auto justify-end">
+                <div class="text-gray-400 text-xs">
+                    Estimated Wattage: <span id="wattage-metric" class="text-white font-bold">0W</span>
                 </div>
-                <div class="grid grid-cols-2 gap-4 pt-3">
-                    <div>
-                        <span class="text-[11px] uppercase tracking-wider text-gray-500 block mb-0.5">Geschat Verbruik</span>
-                        <span id="wattage-metric" class="text-lg font-black text-white">0 Watt</span>
-                    </div>
-                    <div>
-                        <span class="text-[11px] uppercase tracking-wider text-gray-500 block mb-0.5">Gaming Prestaties</span>
-                        <span id="fps-metric" class="text-lg font-black text-cyan-400">Selecteer hardware</span>
-                    </div>
+                <div class="price-box px-4 py-1 rounded flex items-center gap-2">
+                    <span class="text-gray-400 text-xs uppercase tracking-wider font-bold">Total:</span>
+                    <span id="total-price" class="text-emerald-400 font-black text-base">€0.00</span>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- COMPATIBILITEIT ALERT BANNER -->
-        <div id="status-box" class="p-4 mb-8 rounded-xl font-medium text-sm shadow-xl flex items-center space-x-3 bg-blue-950/20 text-blue-400 border border-blue-800/40">
-            <i class="fa-solid fa-circle-info text-base"></i>
-            <span>Selecteer onderdelen om de realtime compatibiliteitscontrole te starten.</span>
-        </div>
-
-        <!-- SYSTEM BUILDER TABEL -->
-        <div class="bg-[#131822]/90 rounded-2xl border border-gray-800/80 shadow-2xl overflow-hidden mb-12">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-[#181f2c] border-b border-gray-800 text-xs font-bold tracking-widest text-gray-400 uppercase">
-                        <th class="p-5 w-1/4">Component</th>
-                        <th class="p-5 w-5/12">Geselecteerd Onderdeel</th>
-                        <th class="p-5 w-1/6">Prijs</th>
-                        <th class="p-5 w-1/6 text-right">Configuratie</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-800/60 text-sm">
-                    <!-- CPU -->
-                    <tr class="hover:bg-[#161d2a]/40 transition">
-                        <td class="p-5 font-bold text-blue-400 flex items-center gap-3"><i class="fa-solid fa-microchip"></i> Processor (CPU)</td>
-                        <td id="cpu-name" class="p-5 text-white font-semibold">Geen processor gekozen</td>
-                        <td id="cpu-price" class="p-5 font-black text-emerald-400 text-base">—</td>
-                        <td class="p-5 text-right">
-                            <select id="cpu-select" onchange="updateSystem()" class="bg-[#171e2c] border border-gray-700 text-gray-200 text-xs font-semibold rounded-xl px-3 py-2.5 w-full max-w-[200px]"></select>
-                        </td>
-                    </tr>
-                    <!-- MOBO -->
-                    <tr class="hover:bg-[#161d2a]/40 transition">
-                        <td class="p-5 font-bold text-purple-400 flex items-center gap-3"><i class="fa-solid fa-server"></i> Moederbord</td>
-                        <td id="mobo-name" class="p-5 text-white font-semibold">Geen moederbord gekozen</td>
-                        <td id="mobo-price" class="p-5 font-black text-emerald-400 text-base">—</td>
-                        <td class="p-5 text-right">
-                            <select id="mobo-select" onchange="updateSystem()" class="bg-[#171e2c] border border-gray-700 text-gray-200 text-xs font-semibold rounded-xl px-3 py-2.5 w-full max-w-[200px]"></select>
-                        </td>
-                    </tr>
-                    <!-- GPU -->
-                    <tr class="hover:bg-[#161d2a]/40 transition">
-                        <td class="p-5 font-bold text-amber-400 flex items-center gap-3"><i class="fa-solid fa-bolt"></i> Videokaart (GPU)</td>
-                        <td id="gpu-name" class="p-5 text-white font-semibold">Geen videokaart gekozen</td>
-                        <td id="gpu-price" class="p-5 font-black text-emerald-400 text-base">—</td>
-                        <td class="p-5 text-right">
-                            <select id="gpu-select" onchange="updateSystem()" class="bg-[#171e2c] border border-gray-700 text-gray-200 text-xs font-semibold rounded-xl px-3 py-2.5 w-full max-w-[200px]"></select>
-                        </td>
-                    </tr>
-                    <!-- RAM -->
-                    <tr class="hover:bg-[#161d2a]/40 transition">
-                        <td class="p-5 font-bold text-cyan-400 flex items-center gap-3"><i class="fa-solid fa-memory"></i> Werkgeheugen (RAM)</td>
-                        <td id="ram-name" class="p-5 text-white font-semibold">Geen geheugen gekozen</td>
-                        <td id="ram-price" class="p-5 font-black text-emerald-400 text-base">—</td>
-                        <td class="p-5 text-right">
-                            <select id="ram-select" onchange="updateSystem()" class="bg-[#171e2c] border border-gray-700 text-gray-200 text-xs font-semibold rounded-xl px-3 py-2.5 w-full max-w-[200px]"></select>
-                        </td>
-                    </tr>
-                    <!-- CASE -->
-                    <tr class="hover:bg-[#161d2a]/40 transition">
-                        <td class="p-5 font-bold text-pink-400 flex items-center gap-3"><i class="fa-solid fa-box"></i> Behuizing (Case)</td>
-                        <td id="case-name" class="p-5 text-white font-semibold">Geen behuizing gekozen</td>
-                        <td id="case-price" class="p-5 font-black text-emerald-400 text-base">—</td>
-                        <td class="p-5 text-right">
-                            <select id="case-select" onchange="updateSystem()" class="bg-[#171e2c] border border-gray-700 text-gray-200 text-xs font-semibold rounded-xl px-3 py-2.5 w-full max-w-[200px]"></select>
-                        </td>
-                    </tr>
-                    <!-- PSU -->
-                    <tr class="hover:bg-[#161d2a]/40 transition">
-                        <td class="p-5 font-bold text-rose-400 flex items-center gap-3"><i class="fa-solid fa-plug"></i> Voeding (PSU)</td>
-                        <td id="psu-name" class="p-5 text-white font-semibold">Geen voeding gekozen</td>
-                        <td id="psu-price" class="p-5 font-black text-emerald-400 text-base">—</td>
-                        <td class="p-5 text-right">
-                            <select id="psu-select" onchange="updateSystem()" class="bg-[#171e2c] border border-gray-700 text-gray-200 text-xs font-semibold rounded-xl px-3 py-2.5 w-full max-w-[200px]"></select>
-                        </td>
-                    </tr>
-                    <!-- TOTAAL SUMMARY -->
-                    <tr class="bg-[#181f2c]/80 font-bold text-white border-t border-gray-800">
-                        <td class="p-5 text-base uppercase text-gray-400">Geschat Totaalbedrag</td>
-                        <td class="p-5"></td>
-                        <td id="total-price" class="p-5 text-2xl font-black bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">€0.00</td>
-                        <td class="p-5 text-right">
-                            <button onclick="window.print()" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white font-bold text-xs px-4 py-2 rounded-xl transition flex items-center gap-2 inline-flex"><i class="fa-solid fa-print"></i> Offerte Opslaan</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+    <!-- MAIN SYSTEM BUILDER TABEL -->
+    <main class="max-w-6xl mx-auto p-4 md:p-8">
+        <div class="table-container rounded shadow-2xl overflow-hidden mb-12">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="table-header text-xs font-bold tracking-wider text-gray-400 uppercase">
+                            <th class="p-4 w-1/5">Component</th>
+                            <th class="p-4 w-1/2">Selection</th>
+                            <th class="p-4 w-1/8">Price</th>
+                            <th class="p-4 w-1/6 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[#2d3139] text-sm">
+                        <!-- CPU -->
+                        <tr class="table-row transition">
+                            <td class="p-4 font-bold text-gray-400 tracking-wide">CPU</td>
+                            <td id="cpu-name" class="p-4 text-blue-400 font-semibold hover:underline cursor-pointer">Geen processor gekozen</td>
+                            <td id="cpu-price" class="p-4 font-bold text-white">—</td>
+                            <td class="p-4 text-right">
+                                <select id="cpu-select" onchange="updateSystem()" class="text-xs font-bold rounded px-2.5 py-1.5 w-full max-w-[160px]"></select>
+                            </td>
+                        </tr>
+                        <!-- MOBO -->
+                        <tr class="table-row transition">
+                            <td class="p-4 font-bold text-gray-400 tracking-wide">Motherboard</td>
+                            <td id="mobo-name" class="p-4 text-blue-400 font-semibold hover:underline cursor-pointer">Geen moederbord gekozen</td>
+                            <td id="mobo-price" class="p-4 font-bold text-white">—</td>
+                            <td class="p-4 text-right">
+                                <select id="mobo-select" onchange="updateSystem()" class="text-xs font-bold rounded px-2.5 py-1.5 w-full max-w-[160px]"></select>
+                            </td>
+                        </tr>
+                        <!-- GPU -->
+                        <tr class="table-row transition">
+                            <td class="p-4 font-bold text-gray-400 tracking-wide">Video Card</td>
+                            <td id="gpu-name" class="p-4 text-blue-400 font-semibold hover:underline cursor-pointer">Geen videokaart gekozen</td>
+                            <td id="gpu-price" class="p-4 font-bold text-white">—</td>
+                            <td class="p-4 text-right">
+                                <select id="gpu-select" onchange="updateSystem()" class="text-xs font-bold rounded px-2.5 py-1.5 w-full max-w-[160px]"></select>
+                            </td>
+                        </tr>
+                        <!-- RAM -->
+                        <tr class="table-row transition">
+                            <td class="p-4 font-bold text-gray-400 tracking-wide">Memory</td>
+                            <td id="ram-name" class="p-4 text-blue-400 font-semibold hover:underline cursor-pointer">Geen geheugen gekozen</td>
+                            <td id="ram-price" class="p-4 font-bold text-white">—</td>
+                            <td class="p-4 text-right">
+                                <select id="ram-select" onchange="updateSystem()" class="text-xs font-bold rounded px-2.5 py-1.5 w-full max-w-[160px]"></select>
+                            </td>
+                        </tr>
+                        <!-- CASE -->
+                        <tr class="table-row transition">
+                            <td class="p-4 font-bold text-gray-400 tracking-wide">Case</td>
+                            <td id="case-name" class="p-4 text-blue-400 font-semibold hover:underline cursor-pointer">Geen behuizing gekozen</td>
+                            <td id="case-price" class="p-4 font-bold text-white">—</td>
+                            <td class="p-4 text-right">
+                                <select id="case-select" onchange="updateSystem()" class="text-xs font-bold rounded px-2.5 py-1.5 w-full max-w-[160px]"></select>
+                            </td>
+                        </tr>
+                        <!-- PSU -->
+                        <tr class="table-row transition">
+                            <td class="p-4 font-bold text-gray-400 tracking-wide">Power Supply</td>
+                            <td id="psu-name" class="p-4 text-blue-400 font-semibold hover:underline cursor-pointer">Geen voeding gekozen</td>
+                            <td id="psu-price" class="p-4 font-bold text-white">—</td>
+                            <td class="p-4 text-right">
+                                <select id="psu-select" onchange="updateSystem()" class="text-xs font-bold rounded px-2.5 py-1.5 w-full max-w-[160px]"></select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </main>
 
+    <footer class="footer py-6 text-center text-xs text-gray-500">
+        <p>&copy; 2026 PCForge Friesland. Volledig modulair opgebouwd.</p>
+    </footer>
+
+    <!-- KOPPELING JAVASCRIPT -->
     <script src="script.js"></script>
 </body>
 </html>
