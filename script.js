@@ -1,85 +1,103 @@
 let partsData = {};
-let selectedCpu = null;
-let selectedMobo = null;
-let selectedGpu = null;
+let selectedParts = { cpu: null, mobo: null, gpu: null, ram: null, pcase: null, psu: null };
 
-// Haal de data op uit de losse JSON-file
 async function loadData() {
     try {
         const response = await fetch('data.json');
         partsData = await response.json();
         setupDropdowns();
     } catch (error) {
-        console.error("Fout bij het laden van data.json:", error);
+        console.error("Fout bij laden van data.json:", error);
     }
 }
 
 function setupDropdowns() {
-    const cpuSelect = document.getElementById('cpu-select');
-    const moboSelect = document.getElementById('mobo-select');
-    const gpuSelect = document.getElementById('gpu-select');
+    const list = [
+        { selectId: 'cpu-select', dataKey: 'cpus' },
+        { selectId: 'mobo-select', dataKey: 'motherboards' },
+        { selectId: 'gpu-select', dataKey: 'gpus' },
+        { selectId: 'ram-select', dataKey: 'ram' },
+        { selectId: 'case-select', dataKey: 'cases' },
+        { selectId: 'psu-select', dataKey: 'psus' }
+    ];
 
-    partsData.cpus.forEach(c => {
-        cpuSelect.innerHTML += `<option value="${c.id}">${c.name} (€${c.price})</option>`;
-    });
-    partsData.motherboards.forEach(m => {
-        moboSelect.innerHTML += `<option value="${m.id}">${m.name} (€${m.price})</option>`;
-    });
-    partsData.gpus.forEach(g => {
-        gpuSelect.innerHTML += `<option value="${g.id}">${g.name} (€${g.price})</option>`;
+    list.forEach(item => {
+        const select = document.getElementById(item.selectId);
+        if (select && partsData[item.dataKey]) {
+            select.innerHTML = '<option value="">Maak een keuze...</option>';
+            partsData[item.dataKey].forEach(part => {
+                select.innerHTML += `<option value="${part.id}">${part.name} (€${part.price})</option>`;
+            });
+        }
     });
 }
 
 function updateSystem() {
-    const cpuId = document.getElementById('cpu-select').value;
-    const moboId = document.getElementById('mobo-select').value;
-    const gpuId = document.getElementById('gpu-select').value;
+    selectedParts.cpu = partsData.cpus.find(c => c.id === document.getElementById('cpu-select').value) || null;
+    selectedParts.mobo = partsData.motherboards.find(m => m.id === document.getElementById('mobo-select').value) || null;
+    selectedParts.gpu = partsData.gpus.find(g => g.id === document.getElementById('gpu-select').value) || null;
+    selectedParts.ram = partsData.ram.find(r => r.id === document.getElementById('ram-select').value) || null;
+    selectedParts.pcase = partsData.cases.find(c => c.id === document.getElementById('case-select').value) || null;
+    selectedParts.psu = partsData.psus.find(p => p.id === document.getElementById('psu-select').value) || null;
 
-    selectedCpu = partsData.cpus.find(c => c.id === cpuId) || null;
-    selectedMobo = partsData.motherboards.find(m => m.id === moboId) || null;
-    selectedGpu = partsData.gpus.find(g => g.id === gpuId) || null;
+    const mappings = [
+        { idName: 'cpu-name', idPrice: 'cpu-price', val: selectedParts.cpu, fallback: 'Geen processor gekozen', suffix: (p) => `(${p.socket})` },
+        { idName: 'mobo-name', idPrice: 'mobo-price', val: selectedParts.mobo, fallback: 'Geen moederbord gekozen', suffix: (p) => `(${p.socket})` },
+        { idName: 'gpu-name', idPrice: 'gpu-price', val: selectedParts.gpu, fallback: 'Geen videokaart gekozen' },
+        { idName: 'ram-name', idPrice: 'ram-price', val: selectedParts.ram, fallback: 'Geen geheugen gekozen' },
+        { idName: 'case-name', idPrice: 'case-price', val: selectedParts.pcase, fallback: 'Geen behuizing gekozen' },
+        { idName: 'psu-name', idPrice: 'psu-price', val: selectedParts.psu, fallback: 'Geen voeding gekozen' }
+    ];
 
-    // Update CPU rij
-    if (selectedCpu) {
-        document.getElementById('cpu-name').innerText = `${selectedCpu.name} (${selectedCpu.socket})`;
-        document.getElementById('cpu-price').innerText = `€${selectedCpu.price}`;
+    mappings.forEach(m => {
+        if (m.val) {
+            document.getElementById(m.idName).innerText = m.suffix ? `${m.val.name} ${m.suffix(m.val)}` : m.val.name;
+            document.getElementById(m.idPrice).innerText = `€${m.val.price}`;
+        } else {
+            document.getElementById(m.idName).innerText = m.fallback;
+            document.getElementById(m.idPrice).innerText = '—';
+        }
+    });
+
+    // Prijscalculatie & Wattage
+    let totaal = 0, wattage = 0;
+    Object.values(selectedParts).forEach(p => {
+        if (p) {
+            totaal += p.price;
+            if (p.wattage) wattage += p.wattage;
+        }
+    });
+    document.getElementById('total-price').innerText = `€${totaal}.00`;
+    document.getElementById('wattage-metric').innerText = totaal > 0 ? `${wattage + 40} Watt` : '0 Watt';
+
+    // FPS / Performance Metric
+    const fpsMetric = document.getElementById('fps-metric');
+    if (selectedParts.gpu) {
+        fpsMetric.innerText = selectedParts.gpu.id === 'gpu2' ? '1440p Ultra / 4K' : '1080p Ultra High';
     } else {
-        document.getElementById('cpu-name').innerText = 'Geen processor gekozen';
-        document.getElementById('cpu-price').innerText = '—';
+        fpsMetric.innerText = 'Selecteer hardware';
     }
 
-    // Update Moederbord rij
-    if (selectedMobo) {
-        document.getElementById('mobo-name').innerText = `${selectedMobo.name} (${selectedMobo.socket})`;
-        document.getElementById('mobo-price').innerText = `€${selectedMobo.price}`;
-    } else {
-        document.getElementById('mobo-name').innerText = 'Geen moederbord gekozen';
-        document.getElementById('mobo-price').innerText = '—';
-    }
-
-    // Update GPU rij
-    if (selectedGpu) {
-        document.getElementById('gpu-name').innerText = selectedGpu.name;
-        document.getElementById('gpu-price').innerText = `€${selectedGpu.price}`;
-    } else {
-        document.getElementById('gpu-name').innerText = 'Geen videokaart gekozen';
-        document.getElementById('gpu-price').innerText = '—';
-    }
-
-    // Totaalprijs berekenen
-    const totaal = (selectedCpu?.price || 0) + (selectedMobo?.price || 0) + (selectedGpu?.price || 0);
-    document.getElementById('total-price').innerText = `€${totaal}`;
-
-    // Systeemstatus en compatibiliteit
+    // Status & Compatibiliteit check
     const statusBox = document.getElementById('status-box');
-    if (selectedCpu && selectedMobo && selectedCpu.socket !== selectedMobo.socket) {
-        statusBox.innerText = '❌ Systeemfout: Processor en moederbord matchen niet!';
-        statusBox.className = 'px-4 py-3 rounded-lg font-bold text-sm shadow-inner bg-rose-950/50 text-rose-400 border border-rose-800';
+    const statusBadge = document.getElementById('status-badge');
+
+    if (selectedParts.cpu && selectedParts.mobo && selectedParts.cpu.socket !== selectedParts.mobo.socket) {
+        statusBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-base"></i> <span>Systeemfout: De ${selectedParts.cpu.name} vereist socket ${selectedParts.cpu.socket}, maar de ${selectedParts.mobo.name} is ${selectedParts.mobo.socket}!</span>`;
+        statusBox.className = 'p-4 mb-8 rounded-xl font-medium text-sm shadow-xl flex items-center space-x-3 bg-rose-950/40 text-rose-400 border border-rose-800/60';
+        statusBadge.innerText = 'CONFLICT';
+        statusBadge.className = 'px-2.5 py-1 rounded-full text-xs font-black bg-rose-500/10 text-rose-400 border border-rose-500/20';
+    } else if (totaal > 0) {
+        statusBox.innerHTML = `<i class="fa-solid fa-circle-check text-base"></i> <span>Systeemstatus: Alle componenten zijn compatibel. Bouw veilig voort!</span>`;
+        statusBox.className = 'p-4 mb-8 rounded-xl font-medium text-sm shadow-xl flex items-center space-x-3 bg-emerald-950/30 text-emerald-400 border border-emerald-800/40';
+        statusBadge.innerText = 'COMPATIBEL';
+        statusBadge.className = 'px-2.5 py-1 rounded-full text-xs font-black bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
     } else {
-        statusBox.innerText = '✅ Systeemstatus: Alle onderdelen passen in elkaar!';
-        statusBox.className = 'px-4 py-3 rounded-lg font-bold text-sm shadow-inner bg-emerald-950/50 text-emerald-400 border border-emerald-800';
+        statusBox.innerHTML = `<i class="fa-solid fa-circle-info text-base"></i> <span>Selecteer onderdelen om de realtime compatibiliteitscontrole te starten.</span>`;
+        statusBox.className = 'p-4 mb-8 rounded-xl font-medium text-sm shadow-xl flex items-center space-x-3 bg-blue-950/20 text-blue-400 border border-blue-800/40';
+        statusBadge.innerText = 'STANDBY';
+        statusBadge.className = 'px-2.5 py-1 rounded-full text-xs font-black bg-blue-500/10 text-blue-400 border border-blue-500/20';
     }
 }
 
-// Start het laden zodra de pagina opstart
 window.onload = loadData;
