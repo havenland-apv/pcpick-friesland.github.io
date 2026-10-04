@@ -7,7 +7,7 @@ async function loadData() {
         partsData = await response.json();
         setupDropdowns();
     } catch (error) {
-        console.error("Fout bij laden van data.json:", error);
+        console.error("Fout bij het laden van data.json:", error);
     }
 }
 
@@ -24,7 +24,7 @@ function setupDropdowns() {
     list.forEach(item => {
         const select = document.getElementById(item.selectId);
         if (select && partsData[item.dataKey]) {
-            select.innerHTML = '<option value="">Maak een keuze...</option>';
+            select.innerHTML = '<option value="">Choose...</option>';
             partsData[item.dataKey].forEach(part => {
                 select.innerHTML += `<option value="${part.id}">${part.name} (€${part.price})</option>`;
             });
@@ -59,7 +59,6 @@ function updateSystem() {
         }
     });
 
-    // Prijscalculatie & Wattage
     let totaal = 0, wattage = 0;
     Object.values(selectedParts).forEach(p => {
         if (p) {
@@ -67,36 +66,17 @@ function updateSystem() {
             if (p.wattage) wattage += p.wattage;
         }
     });
+    
     document.getElementById('total-price').innerText = `€${totaal}.00`;
-    document.getElementById('wattage-metric').innerText = totaal > 0 ? `${wattage + 40} Watt` : '0 Watt';
+    document.getElementById('wattage-metric').innerText = totaal > 0 ? `${wattage + 40}W` : '0W';
 
-    // FPS / Performance Metric
-    const fpsMetric = document.getElementById('fps-metric');
-    if (selectedParts.gpu) {
-        fpsMetric.innerText = selectedParts.gpu.id === 'gpu2' ? '1440p Ultra / 4K' : '1080p Ultra High';
-    } else {
-        fpsMetric.innerText = 'Selecteer hardware';
-    }
-
-    // Status & Compatibiliteit check
     const statusBox = document.getElementById('status-box');
-    const statusBadge = document.getElementById('status-badge');
-
     if (selectedParts.cpu && selectedParts.mobo && selectedParts.cpu.socket !== selectedParts.mobo.socket) {
-        statusBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-base"></i> <span>Systeemfout: De ${selectedParts.cpu.name} vereist socket ${selectedParts.cpu.socket}, maar de ${selectedParts.mobo.name} is ${selectedParts.mobo.socket}!</span>`;
-        statusBox.className = 'p-4 mb-8 rounded-xl font-medium text-sm shadow-xl flex items-center space-x-3 bg-rose-950/40 text-rose-400 border border-rose-800/60';
-        statusBadge.innerText = 'CONFLICT';
-        statusBadge.className = 'px-2.5 py-1 rounded-full text-xs font-black bg-rose-500/10 text-rose-400 border border-rose-500/20';
-    } else if (totaal > 0) {
-        statusBox.innerHTML = `<i class="fa-solid fa-circle-check text-base"></i> <span>Systeemstatus: Alle componenten zijn compatibel. Bouw veilig voort!</span>`;
-        statusBox.className = 'p-4 mb-8 rounded-xl font-medium text-sm shadow-xl flex items-center space-x-3 bg-emerald-950/30 text-emerald-400 border border-emerald-800/40';
-        statusBadge.innerText = 'COMPATIBEL';
-        statusBadge.className = 'px-2.5 py-1 rounded-full text-xs font-black bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+        statusBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> <span>Systeemfout: Sockets matchen niet!</span>`;
+        statusBox.className = 'status-banner-error flex items-center space-x-2 text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded w-full sm:w-auto';
     } else {
-        statusBox.innerHTML = `<i class="fa-solid fa-circle-info text-base"></i> <span>Selecteer onderdelen om de realtime compatibiliteitscontrole te starten.</span>`;
-        statusBox.className = 'p-4 mb-8 rounded-xl font-medium text-sm shadow-xl flex items-center space-x-3 bg-blue-950/20 text-blue-400 border border-blue-800/40';
-        statusBadge.innerText = 'STANDBY';
-        statusBadge.className = 'px-2.5 py-1 rounded-full text-xs font-black bg-blue-500/10 text-blue-400 border border-blue-500/20';
+        statusBox.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>Systeemstatus: Compatibel</span>`;
+        statusBox.className = 'status-banner-ok flex items-center space-x-2 text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded w-full sm:w-auto';
     }
 }
 
