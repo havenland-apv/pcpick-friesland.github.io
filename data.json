@@ -1,14 +1,26 @@
 {
   "cpus": [
-    { "id": "cpu1", "name": "AMD Ryzen 5 7600X", "price": 219, "socket": "AM5" },
-    { "id": "cpu2", "name": "Intel Core i5-13600K", "price": 320, "socket": "LGA1700" }
+    { "id": "cpu1", "name": "AMD Ryzen 5 7600X", "price": 219, "socket": "AM5", "wattage": 105 },
+    { "id": "cpu2", "name": "Intel Core i5-13600K", "price": 320, "socket": "LGA1700", "wattage": 125 }
   ],
   "motherboards": [
-    { "id": "mobo1", "name": "ASUS ROG Strix B650-A", "price": 199, "socket": "AM5" },
-    { "id": "mobo2", "name": "MSI PRO Z790-P", "price": 189, "socket": "LGA1700" }
+    { "id": "mobo1", "name": "ASUS ROG Strix B650-A", "price": 199, "socket": "AM5", "wattage": 0 },
+    { "id": "mobo2", "name": "MSI PRO Z790-P", "price": 189, "socket": "LGA1700", "wattage": 0 }
   ],
   "gpus": [
-    { "id": "gpu1", "name": "NVIDIA RTX 4060 Ti", "price": 399 },
-    { "id": "gpu2", "name": "AMD Radeon RX 7800 XT", "price": 519 }
+    { "id": "gpu1", "name": "NVIDIA RTX 4060 Ti (8GB)", "price": 399, "wattage": 160 },
+    { "id": "gpu2", "name": "AMD Radeon RX 7800 XT (16GB)", "price": 519, "wattage": 250 }
+  ],
+  "ram": [
+    { "id": "ram1", "name": "Corsair Vengeance DDR5 32GB (6000MHz)", "price": 115, "wattage": 10 },
+    { "id": "ram2", "name": "Kingston FURY Beast DDR5 16GB", "price": 65, "wattage": 8 }
+  ],
+  "cases": [
+    { "id": "case1", "name": "NZXT H6 Flow RGB Black", "price": 134, "wattage": 0 },
+    { "id": "case2", "name": "Corsair 4000D Airflow", "price": 89, "wattage": 0 }
+  ],
+  "psus": [
+    { "id": "psu1", "name": "Corsair RM750x 750W Gold", "price": 129, "wattage": 0 },
+    { "id": "psu2", "name": "Be Quiet! System Power 10 600W", "price": 64, "wattage": 0 }
   ]
 }
